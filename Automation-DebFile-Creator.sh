@@ -138,6 +138,14 @@ function main() {
         printf "${S1}Architecture not supported ${R0}\n"
         exit 1
       fi
+      if [[ -f deb-apt-repo.py ]]; then
+        python3 deb-apt-repo.py alldebfiles ${OUTPUT} ${CODENAME} ${BRANCH}
+        sed -i "s|termux|${DISTRO}|g" ${OUTPUT}/dists/${CODENAME}/Release
+        cd ${OUTPUT}/dists/${CODENAME}
+        gpg --clear-sign Release
+        mv Release.asc InRelease
+        sha256sum Release > Release.hash
+      fi
     fi
   done
 }
